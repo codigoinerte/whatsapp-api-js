@@ -7,10 +7,7 @@ RUN apt-get update && \
   freetype \
   harfbuzz \
   ca-certificates \
-  ttf-freefont \
-  nodejs \
-  npm \
-  yarn \
+  ttf-freefont \  
   libatk-bridge2.0-0 \
   libxkbcommon0 \
   libwayland-client0 \
