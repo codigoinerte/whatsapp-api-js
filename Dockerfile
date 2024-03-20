@@ -2,7 +2,16 @@ FROM node:18.12.1
 
 RUN apt-get update && \
   apt-get install -y \
+  apk add --no-cache \
   chromium \
+  nss \
+  freetype \
+  harfbuzz \
+  ca-certificates \
+  ttf-freefont \
+  nodejs \
+  npm \
+  yarn \
   libatk-bridge2.0-0 \
   libxkbcommon0 \
   libwayland-client0 \
