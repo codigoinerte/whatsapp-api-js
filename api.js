@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const axios = require("axios");
 const shelljs = require("shelljs");
+const bot = require("./components/bot");
 
 const config = require("./config.json");
 const { Client, LocalAuth } = require("whatsapp-web.js");
@@ -56,6 +58,9 @@ client.on("message", async (msg) => {
     axios.post(config.webhook.path, { msg });
   }
 });
+
+client.on('message_create',bot);
+
 client.on("disconnected", () => {
   console.log("disconnected");
 });
