@@ -12,6 +12,64 @@ const mediadownloader = (url, path, callback) => {
     })
   }
   
+router.post('/getchat/:chatname', async (req, res) => {
+    let chatname = req.params.chatname;
+    let message = req.body.message;
+
+    if (chatname == undefined || message == undefined) {
+        res.send({ status: "error", message: "please enter valid chatname and message" })
+    } else {        
+        client.getChats().then((data) => {
+            data.forEach(chat => {
+                if (chat.id.server === "g.us" && chat.name === chatname) {
+                    
+                    client.getChatById(chat.id._serialized).then(async chat => {
+                        chat.fetchMessages({limit: 10}).then(async (messages) => {
+                            console.log('Últimos 10 mensajes del chat:');
+                            let response = [];
+                            
+                            for(let message of messages){
+                                let contact = await client.getContactById(message.from);
+                                response.push({
+                                    from: {
+                                        id: message.from,
+                                        name: contact.pushname ?? '',
+                                        phone : contact.number ?? ''
+                                    },
+                                    body: message.body
+                                });
+                            }                            
+
+                            res.status(200).send({ status: 'success', body: response})
+                        });
+                    }).catch(error => {
+                        res.status(400).send({ error })
+                    });
+                    
+                }
+            });     
+        });
+        
+
+        /*
+        // Obtener un chat específico por su ID
+        const chatId = `120363039521808088@g.us`; // Reemplaza con el ID del chat deseado
+        
+        // Fetch de mensajes del chat
+        client.getChatById(chat.id._serialized).then(chat => {
+            chat.fetchMessages({limit: 10}).then(messages => {
+                console.log('Últimos 10 mensajes del chat:');
+                messages.forEach(message => {
+                    console.log(`${message.from}: ${message.body}`);
+                });
+            });
+        }).catch(error => {
+            console.error('Error al obtener el chat:', error);
+        });
+        */
+    }
+});
+
 router.post('/sendmessage/:chatname', async (req, res) => {
     let chatname = req.params.chatname;
     let message = req.body.message;
