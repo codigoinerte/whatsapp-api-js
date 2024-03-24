@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { dbConnection } = require('./database/config');
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
@@ -14,6 +15,8 @@ global.client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: { headless: true, args: ["--no-sandbox"] },
 });
+
+const init = () => {
 
 global.authed = false;
 
@@ -83,3 +86,8 @@ app.use("/contact", contactRoute);
 app.listen(port, () => {
   console.log("Server Running Live on Port : " + port);
 });
+
+}
+
+dbConnection()
+.then(()=> init() );
