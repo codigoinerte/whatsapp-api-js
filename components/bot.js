@@ -28,7 +28,11 @@ const messageOnHolidarys = () => {
   return response;
 }
 const validationAccessBot = (response, origin) => {
-  return  origin.id.fromMe === false && response.id.server === "c.us" && ((response.id.user != "51982974701" && getValidationDay()) || response.id.user == "51938263646") ;
+  if(getValidationDay()){
+    return  origin.id.fromMe === false && response.id.server === "c.us" && response.id.user != "51982974701"
+  }else{
+    return  origin.id.fromMe === false && response.id.server === "c.us" && response.id.user == "51938263646"
+  }   
 }
 const bot = async (origin) => {
     
