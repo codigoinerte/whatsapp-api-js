@@ -11,20 +11,24 @@ const openai = new OpenAI({
     image: si es imagen
     document: puede ser cualquier tipo
 */
-const messageOnHolidarys = () => {
+const getValidationDay = () => {
   const fechaActual = new Date();
 
   const fechaInicio = new Date('2024-03-28');
   const fechaFin = new Date('2024-03-31');
 
+  return fechaActual >= fechaInicio && fechaActual <= fechaFin;
+}
+const messageOnHolidarys = () => {
+  
   let response = '';
-  if (fechaActual >= fechaInicio && fechaActual <= fechaFin) {
+  if (getValidationDay()) {
       response = `Agrega como preambulo a tu mensaje de bienvenida lo siguiente 'Gracias por contactarte conmigo, en estos momentos no estoy presente. Escribeme a partir del Lunes 01 de Abril del 2024',`;
   } 
   return response;
 }
 const validationAccessBot = (response, origin) => {
-  return response.id.server === "c.us" && response.id.user != "51982974701" && origin.id.fromMe === false;
+  return  origin.id.fromMe === false && response.id.server === "c.us" && ((response.id.user != "51982974701" && getValidationDay()) || response.id.user == "51938263646") ;
 }
 const bot = async (origin) => {
     
@@ -43,7 +47,7 @@ const bot = async (origin) => {
                                     }
                                 });
         let countMessagesFromAssistant = messagesServer.filter((item)=> item.role === 'assistant').length;
-        if(countMessagesFromAssistant > 7) return;
+        if(countMessagesFromAssistant > 7 && response.id.user!="51938263646") return;
 
         /* mandar mensaje nuevo con historial */
         const content = `Eres un assistente amable, estas interactuando con el usuario ${response.id.user},${messageOnHolidarys()} responderas en español y de forma corta,*** siempre responde de la forma mas corta posible, si no conoces una respuesta responder con 'Te responderé el lunes'`;
@@ -52,7 +56,7 @@ const bot = async (origin) => {
             ...messagesServer,
             { role: "user", content: origin.body }
         ];
-        console.log(messages);
+        
         const completion = await openai.chat.completions.create({
             messages,
             model: "gpt-3.5-turbo",
