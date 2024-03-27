@@ -15,7 +15,7 @@ const mediadownloader = (url, path, callback) => {
 router.post('/getchat/:chatname', async (req, res) => {
     let chatname = req.params.chatname;
     let message = req.body.message;
-
+    let messagesLimit = req.body?.message ?? 100;
     if (chatname == undefined || message == undefined) {
         res.send({ status: "error", message: "please enter valid chatname and message" })
     } else {        
@@ -24,7 +24,7 @@ router.post('/getchat/:chatname', async (req, res) => {
                 if (chat.id.server === "g.us" && chat.name === chatname) {
                     
                     client.getChatById(chat.id._serialized).then(async chat => {
-                        chat.fetchMessages({limit: 10}).then(async (messages) => {
+                        chat.fetchMessages({limit: messagesLimit}).then(async (messages) => {
                             console.log('Últimos 10 mensajes del chat:');
                             let response = [];
                             
