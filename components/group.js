@@ -96,7 +96,7 @@ router.post('/sendimage/:chatname', async (req, res) => {
 
     let chatname = req.params.chatname;
     let image = req.body.image;
-    let caption = req.body.caption;
+    let caption = req.body.caption ?? '';
     let sendMediaAsSticker = req.body.isSticker ?? false;
 
     if (chatname == undefined || image == undefined) {
@@ -111,7 +111,7 @@ router.post('/sendimage/:chatname', async (req, res) => {
                         }
 
                         let media = new MessageMedia('image/png', image);
-                        client.sendMessage(chat.id._serialized, media, { caption: caption || "", sendMediaAsSticker }).then((response) => {
+                        client.sendMessage(chat.id._serialized, media, { caption, sendMediaAsSticker }).then((response) => {
                             if (response.id.fromMe) {
                                 res.send({ status: 'success', message: `Message successfully send to ${chatname}` });                                
                             }
