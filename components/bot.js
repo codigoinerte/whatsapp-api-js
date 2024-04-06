@@ -1,3 +1,6 @@
+const fs = require('fs');
+const { MessageMedia, Location } = require("whatsapp-web.js");
+
 const saveMessage = require('../helpers/saveMessage');
 const getMessages = require('../helpers/getMessages');
 const OpenAI = require('openai');
@@ -11,6 +14,10 @@ const openai = new OpenAI({
     image: si es imagen
     document: puede ser cualquier tipo
 */
+
+const chatname = process.env.CHATNAME || 'Testing 2';
+const ENABLE_AUTOREPLY = process.env.ENABLE_AUTOREPLY || false;
+
 const getValidationDay = () => {
   const fechaActual = new Date();
 
@@ -36,13 +43,16 @@ const validationAccessBot = (response, origin) => {
 }
 const bot = async (origin) => {
     
+    if(ENABLE_AUTOREPLY == false) return;
+    
     const response = await origin.getChat();
-    const chatname = 'Testing 2';
 
     //if (response.id.server === "g.us" && response.name === chatname && origin.id.fromMe === false) { // contacto grupo
-    if (validationAccessBot(response, origin)){
+    //if (validationAccessBot(response, origin)){
+    if (response.id.server === "g.us" && response.name === chatname && origin.id.fromMe === false){
         
         /*traer historial de mensajes*/
+        /*
         let messagesServer = await getMessages({ idServer: origin.from }) ??  []
             messagesServer = messagesServer.map((message)=>{
                                     return {
@@ -53,7 +63,7 @@ const bot = async (origin) => {
         let countMessagesFromAssistant = messagesServer.filter((item)=> item.role === 'assistant').length;
         if(countMessagesFromAssistant > 7 && response.id.user!="51938263646") return;
 
-        /* mandar mensaje nuevo con historial */
+        // mandar mensaje nuevo con historial
         const content = `Eres un assistente amable, estas interactuando con el usuario ${response.id.user},${messageOnHolidarys()} responderas en español y de forma corta,*** siempre responde de la forma mas corta posible, si no conoces una respuesta responder con 'Te responderé el lunes'`;
         const messages = [
             { role: "system", content},
@@ -66,10 +76,10 @@ const bot = async (origin) => {
             model: "gpt-3.5-turbo",
             temperature: 0.6
         });
-
         //console.log(response);
 
-        /* guardar mensaje ingresado*/
+        // guardar mensaje ingresado
+
         saveMessage({
             idServer: origin.from,
             idUsuario: origin.author,
@@ -78,15 +88,38 @@ const bot = async (origin) => {
         });
         
         const message = (completion.choices[0].message.content).toString().replaceAll("´´´","*");
-
+        
         saveMessage({
             idServer: origin.from,
             idUsuario: 'assistant',
             mensaje: message,
             type: 'GROUP'
         });
-       
-        client.sendMessage(origin.from, message);
+       */
+
+
+        const responseImage = await fetch('https://boundary.tester.org.pe/api/listings-memes', {
+            method : 'GET',            
+        });
+
+        const body = await responseImage.json();
+
+        const image = body.image;
+
+        //client.sendMessage(origin.from, message);
+
+        if (!fs.existsSync('./temp')) {
+            fs.mkdirSync('./temp');
+        }
+
+        //let media = new MessageMedia('image/png', image);
+        //origin.reply(media, { sendMediaAsSticker: true });
+        
+        
+        let media = new MessageMedia('image/png', image);
+        await client.sendMessage(response.id._serialized, media, { sendMediaAsSticker: true });
+        
+        
     }
 }
 
