@@ -44,7 +44,7 @@ const validationAccessBot = (response, origin) => {
 const bot = async (origin) => {
     
     if(ENABLE_AUTOREPLY == false) return;
-    
+    return;
     const response = await origin.getChat();
 
     //if (response.id.server === "g.us" && response.name === chatname && origin.id.fromMe === false) { // contacto grupo
