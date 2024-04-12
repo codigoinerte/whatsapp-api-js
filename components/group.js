@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { MessageMedia, Location } = require("whatsapp-web.js");
+const { MessageMedia, Location, Poll } = require("whatsapp-web.js");
 const request = require('request')
 const vuri = require('valid-url');
 const fs = require('fs');
@@ -213,6 +213,24 @@ router.post('/sendlocation/:chatname', async (req, res) => {
                         }
                     });
                     return true;
+                }
+            });     
+        });
+    }
+});
+
+router.post('/sendpoll/:chatname', async (req, res) => {
+    let chatname = req.params.chatname;
+    let title = req.body.title ?? 'Nueva votación';
+    let options = req.body.options ?? [];
+    if (chatname == undefined || title == undefined) {
+        res.send({ status: "error", message: "please enter valid chatname and message" })
+    } else {
+        client.getChats().then((data) => {
+            data.forEach(chat => {
+                if (chat.id.server === "g.us" && chat.name === chatname) {
+                    const newPoll = new Poll(title, options)
+                    client.sendMessage(chat.id._serialized, newPoll);
                 }
             });     
         });
