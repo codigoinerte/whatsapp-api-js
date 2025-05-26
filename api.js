@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { dbConnection } = require('./database/config');
+//const { dbConnection } = require('./database/config');
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
@@ -17,7 +17,7 @@ global.client = new Client({
   puppeteer: { headless: true, args: ["--no-sandbox"] },
   webVersionCache: {
       type: 'remote',
-      remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
+      //remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
   },
 });
 
@@ -94,5 +94,5 @@ app.listen(port, () => {
 
 }
 
-dbConnection()
-.then(()=> init() );
+// dbConnection()
+// .then(()=> init() );
