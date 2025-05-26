@@ -27,6 +27,15 @@ router.get("/getqr", async (req, res) => {
     .catch(() => sendQr(res));
 });
 
+router.get("/logout", async (req, res) => {
+  try {
+    await client.logout();
+    res.send("LOGGED_OUT");
+  } catch (err) {
+    res.status(500).send("ERROR_LOGGING_OUT");
+  }
+});
+
 function sendQr(res) {
   fs.readFile("components/last.qr", (err, last_qr) => {
     if (!err && last_qr) {
