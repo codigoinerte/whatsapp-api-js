@@ -27,6 +27,20 @@ router.get("/getqr", async (req, res) => {
     .catch(() => sendQr(res));
 });
 
+router.get("/regenerateqr", async (req, res) => {
+  try {
+    if (client && typeof client.logout === "function" && typeof client.initialize === "function") {
+      await client.logout();
+      await client.initialize();
+      res.send("QR_REGENERATED");
+    } else {
+      res.status(500).send("CLIENT_NOT_INITIALIZED");
+    }
+  } catch (err) {
+    res.status(500).send("ERROR_REGENERATING_QR");
+  }
+});
+
 router.get("/logout", async (req, res) => {
   try {
     await client.logout();
