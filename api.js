@@ -94,5 +94,7 @@ app.listen(port, () => {
 
 }
 
+init();
+
 // dbConnection()
-// .then(()=> init() );
+// .then(()=>  );
